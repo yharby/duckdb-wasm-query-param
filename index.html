@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuckDB Shell URL Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255, 241, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(125, 102, 255, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: #1a1a1a;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            border: 3px solid #FFF100;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #b8b8b8;
+            margin-bottom: 30px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .highlight-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            padding: 16px;
+            border: 3px solid #333;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #0d0d0d;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: auto;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        textarea {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            max-height: 400px;
+            padding: 16px;
+            border: 3px solid #333;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s;
+            background: transparent;
+            color: transparent;
+            z-index: 2;
+            caret-color: #FFF100;
+            overflow-y: auto;
+        }
+
+        textarea::selection {
+            background: rgba(255, 241, 0, 0.3);
+            color: transparent;
+        }
+
+        textarea::placeholder {
+            color: #666;
+            opacity: 1;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #FFF100;
+            box-shadow: 0 0 0 4px rgba(255, 241, 0, 0.15);
+        }
+
+        textarea:focus + .highlight-backdrop {
+            border-color: #FFF100;
+            background: #0d0d0d;
+            box-shadow: 0 0 0 4px rgba(255, 241, 0, 0.15);
+        }
+
+        .sql-keywords {
+            color: #FFA500;
+            font-weight: 600;
+        }
+
+        .sql-function {
+            color: #9D86FF;
+            font-weight: 500;
+        }
+
+        .sql-number {
+            color: #20E78A;
+        }
+
+        .sql-string {
+            color: #4EBFFF;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 13px;
+        }
+
+        .generate-btn {
+            background: #FFF100;
+            color: #000;
+            border: 3px solid #FFF100;
+        }
+
+        .generate-btn:hover {
+            background: #ffed00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 241, 0, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn {
+            background: #FF6900;
+            color: white;
+            border: 3px solid #FF6900;
+        }
+
+        .copy-btn:hover {
+            background: #e55d00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 0, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn:disabled {
+            background: #e0e0e0;
+            border-color: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .open-btn {
+            background: #000;
+            color: #FFF100;
+            border: 3px solid #FFF100;
+        }
+
+        .open-btn:hover {
+            background: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 241, 0, 0.3);
+        }
+
+        .open-btn:active {
+            transform: translateY(0);
+        }
+
+        .open-btn:disabled {
+            background: #e0e0e0;
+            border-color: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output-section {
+            margin-top: 30px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .output-section.visible {
+            display: block;
+        }
+
+        .url-output {
+            background: #0d0d0d;
+            border: 3px solid #FFF100;
+            border-radius: 12px;
+            padding: 16px;
+            word-break: break-all;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            color: #e0e0e0;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #20E78A;
+            color: #000;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 600;
+            border: 3px solid #20E78A;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.error {
+            background: #FF6900;
+            color: white;
+            border-color: #e05d00;
+        }
+
+        .history-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .history-section.visible {
+            display: block;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-title {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        .clear-history-btn {
+            background: transparent;
+            color: #FF6900;
+            border: 2px solid #FF6900;
+            padding: 6px 12px;
+            font-size: 12px;
+            min-width: auto;
+            flex: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clear-history-btn:hover {
+            background: #FF6900;
+            color: white;
+            transform: none;
+        }
+
+        .history-cards {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 5px 0 10px 0;
+            scroll-behavior: smooth;
+        }
+
+        .history-cards::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .history-cards::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 3px;
+        }
+
+        .history-cards::-webkit-scrollbar-thumb {
+            background: #FFF100;
+            border-radius: 3px;
+        }
+
+        .history-card {
+            background: #0d0d0d;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 12px 30px 12px 12px;
+            min-width: 280px;
+            max-width: 400px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .history-card:hover {
+            border-color: #FFF100;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(255, 241, 0, 0.2);
+        }
+
+        .history-card-time {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .history-card-query {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #e0e0e0;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .history-card-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #FF6900;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            font-size: 16px;
+            line-height: 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s;
+            padding: 0;
+            margin: 0;
+            font-weight: normal;
+            font-family: Arial, sans-serif;
+        }
+
+        .history-card:hover .history-card-delete {
+            opacity: 1;
+        }
+
+        .history-card-delete:hover {
+            background: #e05d00;
+            transform: scale(1.15);
+        }
+
+        .history-card-delete:active {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #333;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: #FFF100;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid #FFF100;
+        }
+
+        .footer a:hover {
+            color: #000;
+            background: #FFF100;
+            border-bottom-color: #FFF100;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .notification {
+                left: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shell URL Generator</h1>
+        <p class="subtitle">Generate shareable DuckDB shell URLs with encoded SQL queries. Perfect for documentation, sharing examples, or quick testing.</p>
+
+        <label for="sqlInput">Enter your SQL query:</label>
+        <div class="textarea-wrapper">
+            <textarea
+                id="sqlInput"
+                placeholder="SELECT * FROM table_name WHERE condition = 'value';"
+                spellcheck="false"
+            >SELECT * FROM generate_series(1, 10) AS t(id);</textarea>
+            <div class="highlight-backdrop" id="highlightBackdrop"></div>
+        </div>
+
+        <div class="button-group">
+            <button class="generate-btn" onclick="generateURL()">Generate URL</button>
+            <button class="copy-btn" id="copyBtn" onclick="copyURL()" disabled>Copy URL</button>
+            <button class="open-btn" id="openBtn" onclick="openURL()" disabled>Open in Shell</button>
+        </div>
+
+        <div class="output-section" id="outputSection">
+            <label>Generated URL:</label>
+            <div class="url-output" id="urlOutput"></div>
+        </div>
+
+        <div class="history-section" id="historySection">
+            <div class="history-header">
+                <div class="history-title">Recent Queries</div>
+                <button class="clear-history-btn" onclick="clearHistory()">Clear All</button>
+            </div>
+            <div class="history-cards" id="historyCards"></div>
+        </div>
+
+        <div class="footer">
+            <p>This tool generates URLs for <a href="https://shell.duckdb.org" target="_blank">DuckDB Shell</a> using the official encoding scheme.</p>
+            <p style="margin-top: 8px; font-size: 12px;">DuckDB is a trademark of the <a href="https://duckdb.org" target="_blank">DuckDB Foundation</a>. This is an independent tool.</p>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">URL copied to clipboard!</div>
+
+    <script>
+        let generatedURL = '';
+        const HISTORY_KEY = 'duckdb-query-history';
+        const MAX_HISTORY = 10;
+
+        // Custom character swapping function (matches DuckDB shell's extraswaps)
+        function extraswaps(input) {
+            let result = '';
+            for (let i = 0; i < input.length; i++) {
+                if (input[i] === ' ') {
+                    result += '-';
+                } else if (input[i] === '-') {
+                    result += ' ';
+                } else if (input[i] === ';') {
+                    result += '~';
+                } else if (input[i] === '~') {
+                    result += ';';
+                } else {
+                    result += input[i];
+                }
+            }
+            return result;
+        }
+
+        // Load history from localStorage
+        function loadHistory() {
+            try {
+                const history = localStorage.getItem(HISTORY_KEY);
+                return history ? JSON.parse(history) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Save history to localStorage
+        function saveHistory(history) {
+            try {
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            } catch (e) {
+                console.error('Failed to save history', e);
+            }
+        }
+
+        // Add query to history
+        function addToHistory(query) {
+            const history = loadHistory();
+            const newEntry = {
+                query: query,
+                timestamp: new Date().toISOString(),
+                id: Date.now()
+            };
+
+            // Add to beginning, keep only MAX_HISTORY items
+            history.unshift(newEntry);
+            if (history.length > MAX_HISTORY) {
+                history.pop();
+            }
+
+            saveHistory(history);
+            renderHistory();
+        }
+
+        // Render history cards
+        function renderHistory() {
+            const history = loadHistory();
+            const historySection = document.getElementById('historySection');
+            const historyCards = document.getElementById('historyCards');
+
+            if (history.length === 0) {
+                historySection.classList.remove('visible');
+                return;
+            }
+
+            historySection.classList.add('visible');
+            historyCards.innerHTML = '';
+
+            history.forEach((entry) => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.onclick = () => loadQueryFromHistory(entry.query);
+
+                const time = new Date(entry.timestamp);
+                const timeStr = time.toLocaleDateString() + ' ' + time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                card.innerHTML = `
+                    <div class="history-card-time">${timeStr}</div>
+                    <div class="history-card-query">${highlightSQL(entry.query)}</div>
+                    <button class="history-card-delete" onclick="event.stopPropagation(); deleteHistoryItem(${entry.id})">×</button>
+                `;
+
+                historyCards.appendChild(card);
+            });
+        }
+
+        // Load query from history
+        function loadQueryFromHistory(query) {
+            document.getElementById('sqlInput').value = query;
+            document.getElementById('sqlInput').focus();
+            showNotification('Query loaded from history', false);
+        }
+
+        // Delete single history item
+        function deleteHistoryItem(id) {
+            const history = loadHistory();
+            const filtered = history.filter(entry => entry.id !== id);
+            saveHistory(filtered);
+            renderHistory();
+            showNotification('Query removed from history', false);
+        }
+
+        // Clear all history
+        function clearHistory() {
+            if (confirm('Clear all query history?')) {
+                saveHistory([]);
+                renderHistory();
+                showNotification('History cleared', false);
+            }
+        }
+
+        // Escape HTML for safe display
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enhanced SQL syntax highlighting with strings, numbers, and functions
+        function highlightSQL(sql) {
+            const keywords = [
+                'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP',
+                'TABLE', 'DATABASE', 'INDEX', 'VIEW', 'JOIN', 'LEFT', 'RIGHT', 'INNER',
+                'OUTER', 'ON', 'AS', 'AND', 'OR', 'NOT', 'IN', 'EXISTS', 'BETWEEN',
+                'LIKE', 'IS', 'NULL', 'ORDER', 'BY', 'GROUP', 'HAVING', 'LIMIT',
+                'OFFSET', 'UNION', 'ALL', 'DISTINCT', 'WITH', 'INTO', 'VALUES', 'SET'
+            ];
+
+            const functions = [
+                'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'GENERATE_SERIES',
+                'CASE', 'WHEN', 'THEN', 'ELSE', 'END'
+            ];
+
+            // First escape HTML to prevent XSS
+            let highlighted = escapeHtml(sql);
+
+            // Highlight strings (single quotes)
+            highlighted = highlighted.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+
+            // Highlight numbers
+            highlighted = highlighted.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+
+            // Highlight functions
+            functions.forEach(func => {
+                const regex = new RegExp('\\b(' + func + ')\\b', 'gi');
+                highlighted = highlighted.replace(regex, (match) => {
+                    return '<span class="sql-function">' + match.toUpperCase() + '</span>';
+                });
+            });
+
+            // Highlight keywords
+            keywords.forEach(keyword => {
+                const regex = new RegExp('\\b(' + keyword + ')\\b', 'gi');
+                highlighted = highlighted.replace(regex, (match) => {
+                    return '<span class="sql-keywords">' + match.toUpperCase() + '</span>';
+                });
+            });
+
+            return highlighted;
+        }
+
+        // Sync textarea with highlighted backdrop
+        function syncHighlight() {
+            const textarea = document.getElementById('sqlInput');
+            const backdrop = document.getElementById('highlightBackdrop');
+            const highlighted = highlightSQL(textarea.value);
+            backdrop.innerHTML = highlighted;
+        }
+
+        // Sync scroll position and height
+        function syncScroll() {
+            const textarea = document.getElementById('sqlInput');
+            const backdrop = document.getElementById('highlightBackdrop');
+            backdrop.scrollTop = textarea.scrollTop;
+            backdrop.scrollLeft = textarea.scrollLeft;
+            backdrop.style.height = textarea.offsetHeight + 'px';
+        }
+
+        function generateURL() {
+            const sqlInput = document.getElementById('sqlInput').value.trim();
+
+            if (!sqlInput) {
+                showNotification('Please enter a SQL query', true);
+                return;
+            }
+
+            // Encode the SQL query using DuckDB shell's encoding scheme
+            const swapped = extraswaps(sqlInput);
+            const encoded = encodeURIComponent(swapped);
+
+            // Generate the DuckDB shell URL
+            generatedURL = `https://shell.duckdb.org/#queries=v0,${encoded}`;
+
+            // Display the URL
+            document.getElementById('urlOutput').textContent = generatedURL;
+            document.getElementById('outputSection').classList.add('visible');
+            document.getElementById('copyBtn').disabled = false;
+            document.getElementById('openBtn').disabled = false;
+
+            // Add to history
+            addToHistory(sqlInput);
+
+            showNotification('URL generated successfully!', false);
+        }
+
+        function copyURL() {
+            if (!generatedURL) return;
+
+            navigator.clipboard.writeText(generatedURL).then(() => {
+                showNotification('URL copied to clipboard!', false);
+            }).catch(() => {
+                showNotification('Failed to copy URL', true);
+            });
+        }
+
+        function openURL() {
+            if (!generatedURL) return;
+            window.open(generatedURL, '_blank');
+        }
+
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+
+            if (isError) {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('error');
+            }
+
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('sqlInput');
+
+            // Initial highlight and sync
+            syncHighlight();
+            syncScroll();
+
+            // Update highlighting on input
+            textarea.addEventListener('input', syncHighlight);
+
+            // Sync scroll position
+            textarea.addEventListener('scroll', syncScroll);
+
+            // Sync on resize (when user manually resizes textarea)
+            const resizeObserver = new ResizeObserver(() => {
+                syncScroll();
+            });
+            resizeObserver.observe(textarea);
+
+            // Allow pressing Ctrl/Cmd + Enter to generate URL
+            textarea.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    generateURL();
+                }
+            });
+
+            // Load history
+            renderHistory();
+        });
+    </script>
+</body>
+</html>
