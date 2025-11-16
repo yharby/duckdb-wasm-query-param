@@ -292,6 +292,268 @@
             border-color: #e05d00;
         }
 
+        .queries-section {
+            margin-top: 30px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .queries-section.visible {
+            display: block;
+        }
+
+        .queries-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .queries-title {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        .queries-title span {
+            color: #FFF100;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .add-query-btn {
+            background: transparent;
+            color: #20E78A;
+            border: 2px solid #20E78A;
+            padding: 6px 12px;
+            font-size: 12px;
+            min-width: auto;
+            flex: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-query-btn:hover {
+            background: #20E78A;
+            color: #000;
+            transform: none;
+        }
+
+        .queries-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .query-item-wrapper {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .query-item {
+            background: #0d0d0d;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 12px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .query-item:hover {
+            border-color: #FFF100;
+        }
+
+        .add-query-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .query-item-wrapper:hover .add-query-divider,
+        .add-query-divider:hover {
+            opacity: 1;
+        }
+
+        .add-query-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #333;
+            z-index: 0;
+        }
+
+        .add-query-divider button {
+            background: #20E78A;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.15s;
+            z-index: 1;
+            position: relative;
+            line-height: 1;
+        }
+
+        .add-query-divider button:hover {
+            background: #1bc976;
+            transform: scale(1.15);
+            box-shadow: 0 2px 8px rgba(32, 231, 138, 0.4);
+        }
+
+        .query-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .query-item-number {
+            font-weight: 700;
+            color: #FFF100;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .query-item-type {
+            font-size: 11px;
+            color: #888;
+            background: #1a1a1a;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .query-item-type.sql {
+            color: #9D86FF;
+        }
+
+        .query-item-type.command {
+            color: #20E78A;
+        }
+
+        .query-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .query-item-actions button {
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            min-width: auto;
+            transition: all 0.2s;
+        }
+
+        .query-item-actions button:hover {
+            color: #FFF100;
+            transform: scale(1.2);
+        }
+
+        .query-item-actions .delete-btn:hover {
+            color: #FF6900;
+        }
+
+        .query-item-content {
+            position: relative;
+        }
+
+        .query-item-content .textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .query-item-content .highlight-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 60px;
+            max-height: 200px;
+            padding: 10px;
+            border: 2px solid #222;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #000;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: auto;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .query-item-content textarea {
+            position: relative;
+            width: 100%;
+            min-height: 60px;
+            max-height: 200px;
+            padding: 10px;
+            border: 2px solid #222;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.2s;
+            background: transparent;
+            color: transparent;
+            z-index: 2;
+            caret-color: #FFF100;
+            overflow-y: auto;
+        }
+
+        .query-item-content textarea::selection {
+            background: rgba(255, 241, 0, 0.3);
+            color: transparent;
+        }
+
+        .query-item-content textarea:focus {
+            outline: none;
+            border-color: #FFF100;
+            box-shadow: 0 0 0 3px rgba(255, 241, 0, 0.1);
+        }
+
+        .query-item-content textarea:focus + .highlight-backdrop {
+            border-color: #FFF100;
+            box-shadow: 0 0 0 3px rgba(255, 241, 0, 0.1);
+        }
+
+        .query-drag-handle {
+            color: #666;
+            cursor: move;
+            font-size: 16px;
+            user-select: none;
+        }
+
+        .query-drag-handle:hover {
+            color: #FFF100;
+        }
+
         .history-section {
             margin-top: 30px;
             display: none;
@@ -477,22 +739,18 @@
 <body>
     <div class="container">
         <h1>Shell URL Generator</h1>
-        <p class="subtitle">Generate shareable DuckDB shell URLs with encoded SQL queries. Perfect for documentation, sharing examples, or quick testing.</p>
+        <p class="subtitle">Create shareable DuckDB shell URLs with encoded SQL queries. Add queries using the + button below.<br><strong>Note:</strong> Dot commands (like <code>.files</code>, <code>.tables</code>) cannot be executed via URL due to shell limitations.</p>
 
-        <label for="sqlInput">Enter your SQL query:</label>
-        <div class="textarea-wrapper">
-            <textarea
-                id="sqlInput"
-                placeholder="SELECT * FROM table_name WHERE condition = 'value';"
-                spellcheck="false"
-            >SELECT * FROM generate_series(1, 10) AS t(id);</textarea>
-            <div class="highlight-backdrop" id="highlightBackdrop"></div>
-        </div>
-
-        <div class="button-group">
-            <button class="generate-btn" onclick="generateURL()">Generate URL</button>
-            <button class="copy-btn" id="copyBtn" onclick="copyURL()" disabled>Copy URL</button>
-            <button class="open-btn" id="openBtn" onclick="openURL()" disabled>Open in Shell</button>
+        <div class="queries-section visible" id="queriesSection">
+            <div class="queries-header">
+                <div class="queries-title">Queries <span id="queryCount"></span></div>
+            </div>
+            <div class="queries-list" id="queriesList"></div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="generate-btn" onclick="generateURL()">Generate URL</button>
+                <button class="copy-btn" id="copyBtn" onclick="copyURL()" disabled>Copy URL</button>
+                <button class="open-btn" id="openBtn" onclick="openURL()" disabled>Open in Shell</button>
+            </div>
         </div>
 
         <div class="output-section" id="outputSection">
@@ -522,20 +780,72 @@
         const HISTORY_KEY = 'duckdb-query-history';
         const MAX_HISTORY = 10;
 
-        // Custom character swapping function (matches DuckDB shell's extraswaps)
+        // Character swapping function matching DuckDB shell's official encoding
+        // This function is symmetrical - it works for both encoding and decoding
         function extraswaps(input) {
             let result = '';
+            let inString = false;
+            let stringChar = '';
+            let inComment = false;
+
             for (let i = 0; i < input.length; i++) {
-                if (input[i] === ' ') {
+                const char = input[i];
+                const nextChar = i < input.length - 1 ? input[i + 1] : '';
+
+                // Check for SQL comments (--)
+                if (!inString && char === '-' && nextChar === '-') {
+                    inComment = true;
+                    result += '--';
+                    i++; // Skip the next hyphen
+                    continue;
+                }
+
+                // End of line ends comment
+                if (inComment && (char === '\n' || char === '\r')) {
+                    inComment = false;
+                    result += char;
+                    continue;
+                }
+
+                // Don't swap characters in comments
+                if (inComment) {
+                    result += char;
+                    continue;
+                }
+
+                // Track if we're inside a string literal
+                if ((char === "'" || char === '"') && (i === 0 || input[i-1] !== '\\')) {
+                    if (!inString) {
+                        inString = true;
+                        stringChar = char;
+                        result += char;
+                    } else if (char === stringChar) {
+                        inString = false;
+                        stringChar = '';
+                        result += char;
+                    } else {
+                        result += char;
+                    }
+                    continue;
+                }
+
+                // Don't swap characters inside strings
+                if (inString) {
+                    result += char;
+                    continue;
+                }
+
+                // Apply character swaps (outside of strings and comments)
+                if (char === ' ') {
                     result += '-';
-                } else if (input[i] === '-') {
+                } else if (char === '-') {
                     result += ' ';
-                } else if (input[i] === ';') {
+                } else if (char === ';') {
                     result += '~';
-                } else if (input[i] === '~') {
+                } else if (char === '~') {
                     result += ';';
                 } else {
-                    result += input[i];
+                    result += char;
                 }
             }
             return result;
@@ -686,37 +996,183 @@
             return highlighted;
         }
 
-        // Sync textarea with highlighted backdrop
-        function syncHighlight() {
-            const textarea = document.getElementById('sqlInput');
-            const backdrop = document.getElementById('highlightBackdrop');
-            const highlighted = highlightSQL(textarea.value);
-            backdrop.innerHTML = highlighted;
+
+        // Queries array - start with simple examples
+        let queries = [
+            "SELECT 'Hello DuckDB!' AS message",
+            "SELECT 42 AS answer",
+            "SELECT * FROM generate_series(1, 5) AS t(id)"
+        ];
+
+        // Render the queries section
+        function renderQueriesSection() {
+            const queriesList = document.getElementById('queriesList');
+            const queryCount = document.getElementById('queryCount');
+
+            queryCount.textContent = `(${queries.length})`;
+            queriesList.innerHTML = '';
+
+            queries.forEach((query, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'query-item-wrapper';
+
+                const isDotCommand = query.trim().startsWith('.');
+
+                wrapper.innerHTML = `
+                    <div class="query-item">
+                        <div class="query-item-header">
+                            <div class="query-item-number">
+                                <span class="query-drag-handle" draggable="true" data-index="${index}">⋮⋮</span>
+                                Query #${index + 1}
+                                <span class="query-item-type ${isDotCommand ? 'command' : 'sql'}">${isDotCommand ? 'Command' : 'SQL'}</span>
+                                ${isDotCommand ? '<span class="query-item-type" style="background:#FF6900;color:white" title="Dot commands cannot be executed via URL">⚠ URL Not Supported</span>' : ''}
+                            </div>
+                            <div class="query-item-actions">
+                                <button onclick="moveQueryUp(${index})" title="Move up" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
+                                <button onclick="moveQueryDown(${index})" title="Move down" ${index === queries.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
+                                <button class="delete-btn" onclick="deleteQuery(${index})" title="Delete">×</button>
+                            </div>
+                        </div>
+                        <div class="query-item-content">
+                            <div class="textarea-wrapper">
+                                <textarea
+                                    id="query-${index}"
+                                    oninput="updateQuery(${index}, this.value); syncQueryHighlight(${index})"
+                                    onscroll="syncQueryScroll(${index})"
+                                    spellcheck="false">${query}</textarea>
+                                <div class="highlight-backdrop" id="backdrop-${index}"></div>
+                            </div>
+                            ${isDotCommand ? '<div style="color:#FF6900;font-size:11px;margin-top:5px;">⚠️ This dot command will be excluded from the URL. Run it manually after opening the shell.</div>' : ''}
+                        </div>
+                    </div>
+                    <div class="add-query-divider">
+                        <button onclick="addQueryAfter(${index})" title="Add query below">+</button>
+                    </div>
+                `;
+                queriesList.appendChild(wrapper);
+            });
+
+            // Reset URL generation state
+            document.getElementById('outputSection').classList.remove('visible');
+            document.getElementById('copyBtn').disabled = true;
+            document.getElementById('openBtn').disabled = true;
+
+            // Initialize highlighting for all queries
+            queries.forEach((_, index) => {
+                syncQueryHighlight(index);
+                syncQueryScroll(index);
+            });
         }
 
-        // Sync scroll position and height
-        function syncScroll() {
-            const textarea = document.getElementById('sqlInput');
-            const backdrop = document.getElementById('highlightBackdrop');
-            backdrop.scrollTop = textarea.scrollTop;
-            backdrop.scrollLeft = textarea.scrollLeft;
-            backdrop.style.height = textarea.offsetHeight + 'px';
+        // Sync highlighting for a specific query
+        function syncQueryHighlight(index) {
+            const textarea = document.getElementById(`query-${index}`);
+            const backdrop = document.getElementById(`backdrop-${index}`);
+            if (textarea && backdrop) {
+                const highlighted = highlightSQL(textarea.value);
+                backdrop.innerHTML = highlighted;
+            }
         }
 
+        // Sync scroll for a specific query
+        function syncQueryScroll(index) {
+            const textarea = document.getElementById(`query-${index}`);
+            const backdrop = document.getElementById(`backdrop-${index}`);
+            if (textarea && backdrop) {
+                backdrop.scrollTop = textarea.scrollTop;
+                backdrop.scrollLeft = textarea.scrollLeft;
+                backdrop.style.height = textarea.offsetHeight + 'px';
+            }
+        }
+
+        // Add a new query after specific index
+        function addQueryAfter(index) {
+            queries.splice(index + 1, 0, '');
+            renderQueriesSection();
+            // Focus on the new textarea
+            setTimeout(() => {
+                const newTextarea = document.getElementById(`query-${index + 1}`);
+                if (newTextarea) newTextarea.focus();
+            }, 100);
+        }
+
+        // Update a query
+        function updateQuery(index, value) {
+            queries[index] = value;
+        }
+
+        // Delete a query
+        function deleteQuery(index) {
+            if (queries.length === 1) {
+                showNotification('Cannot delete the last query', true);
+                return;
+            }
+            queries.splice(index, 1);
+            renderQueriesSection();
+        }
+
+        // Move query up
+        function moveQueryUp(index) {
+            if (index === 0) return;
+            [queries[index], queries[index - 1]] = [queries[index - 1], queries[index]];
+            renderQueriesSection();
+        }
+
+        // Move query down
+        function moveQueryDown(index) {
+            if (index === queries.length - 1) return;
+            [queries[index], queries[index + 1]] = [queries[index + 1], queries[index]];
+            renderQueriesSection();
+        }
+
+        // Generate URL from queries
         function generateURL() {
-            const sqlInput = document.getElementById('sqlInput').value.trim();
-
-            if (!sqlInput) {
-                showNotification('Please enter a SQL query', true);
+            if (queries.length === 0) {
+                showNotification('No queries to generate URL', true);
                 return;
             }
 
-            // Encode the SQL query using DuckDB shell's encoding scheme
-            const swapped = extraswaps(sqlInput);
-            const encoded = encodeURIComponent(swapped);
+            // Filter out empty queries and dot commands
+            const sqlQueries = [];
+            const dotCommands = [];
 
-            // Generate the DuckDB shell URL
-            generatedURL = `https://shell.duckdb.org/#queries=v0,${encoded}`;
+            queries.forEach(q => {
+                const trimmed = q.trim();
+                if (!trimmed) return;
+
+                if (trimmed.startsWith('.')) {
+                    dotCommands.push(trimmed);
+                } else {
+                    sqlQueries.push(trimmed);
+                }
+            });
+
+            if (sqlQueries.length === 0) {
+                showNotification('No SQL queries to generate URL (only dot commands found)', true);
+                return;
+            }
+
+            // Warn about dot commands
+            if (dotCommands.length > 0) {
+                const dotCmdList = dotCommands.join(', ');
+                showNotification(`⚠️ Warning: Dot commands (${dotCmdList}) cannot be executed via URL due to DuckDB Shell limitations. You'll need to run them manually.`, true);
+            }
+
+            // Encode each SQL query using DuckDB shell's encoding scheme
+            const encodedQueries = sqlQueries.map(query => {
+                let finalQuery = query.trim();
+
+                // Add semicolon if not present
+                if (!finalQuery.endsWith(';')) {
+                    finalQuery += ';';
+                }
+
+                const swapped = extraswaps(finalQuery);
+                return encodeURIComponent(swapped);
+            });
+
+            // Generate the DuckDB shell URL with multiple queries
+            generatedURL = `https://shell.duckdb.org/#queries=v0,${encodedQueries.join(',')}`;
 
             // Display the URL
             document.getElementById('urlOutput').textContent = generatedURL;
@@ -724,10 +1180,13 @@
             document.getElementById('copyBtn').disabled = false;
             document.getElementById('openBtn').disabled = false;
 
-            // Add to history
+            // Add to history (combine all queries)
+            const sqlInput = sqlQueries.join('\n\n');
             addToHistory(sqlInput);
 
-            showNotification('URL generated successfully!', false);
+            const queryMsg = `URL generated with ${sqlQueries.length} SQL ${sqlQueries.length === 1 ? 'query' : 'queries'}`;
+            const dotMsg = dotCommands.length > 0 ? ` (${dotCommands.length} dot ${dotCommands.length === 1 ? 'command' : 'commands'} excluded)` : '';
+            showNotification(queryMsg + dotMsg + '!', false);
         }
 
         function copyURL() {
@@ -762,32 +1221,10 @@
             }, 3000);
         }
 
-        // Initialize syntax highlighting
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            const textarea = document.getElementById('sqlInput');
-
-            // Initial highlight and sync
-            syncHighlight();
-            syncScroll();
-
-            // Update highlighting on input
-            textarea.addEventListener('input', syncHighlight);
-
-            // Sync scroll position
-            textarea.addEventListener('scroll', syncScroll);
-
-            // Sync on resize (when user manually resizes textarea)
-            const resizeObserver = new ResizeObserver(() => {
-                syncScroll();
-            });
-            resizeObserver.observe(textarea);
-
-            // Allow pressing Ctrl/Cmd + Enter to generate URL
-            textarea.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    generateURL();
-                }
-            });
+            // Render initial queries
+            renderQueriesSection();
 
             // Load history
             renderHistory();
